@@ -8,7 +8,7 @@ routes.get('/people', async(req, res) => {
   let cast: PersonPropsT[] = [];
   let page = 1;
   let nextPage = 'https://swapi.dev/api/people/';
-  
+
   try {    
     while (nextPage) {
       const response = await api.get(`people/?page=${page}`)
@@ -18,7 +18,6 @@ routes.get('/people', async(req, res) => {
       cast = [ ...cast, ...response.data.results]
 
       page++;
-      console.log("nextPage", response.data)
     }
     
     const castNames = cast.map((person: PersonPropsT) => {
@@ -35,9 +34,12 @@ routes.get('/people', async(req, res) => {
 routes.get('/person', async(req, res) => {
   try {
     const { data } = await api.get(`people/?search=${req.query.search}`)
-    console.log('res', data)
 
-    return res.send({ data: data })
+    const castNames = data.results.map((person: PersonPropsT) => {
+      return person.name
+    })
+
+    return res.send({ data: castNames })
   } catch (error) {
     res.send({ error: error })
   }
